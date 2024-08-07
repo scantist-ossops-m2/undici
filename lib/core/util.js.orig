@@ -9,7 +9,6 @@ const { InvalidArgumentError } = require('./errors')
 const { Blob } = require('buffer')
 const nodeUtil = require('util')
 const { stringify } = require('querystring')
-const { headerNameLowerCasedRecord } = require('./constants')
 
 function nop () {}
 
@@ -210,15 +209,6 @@ function parseKeepAliveTimeout (val) {
   return m ? parseInt(m[1], 10) * 1000 : null
 }
 
-/**
- * Retrieves a header name and returns its lowercase value.
- * @param {string | Buffer} value Header name
- * @returns {string}
- */
-function headerNameToString (value) {
-  return headerNameLowerCasedRecord[value] || value.toLowerCase()
-}
-
 function parseHeaders (headers, obj = {}) {
   for (let i = 0; i < headers.length; i += 2) {
     const key = headers[i].toString().toLowerCase()
@@ -387,7 +377,6 @@ module.exports = {
   isIterable,
   isAsyncIterable,
   isDestroyed,
-  headerNameToString,
   parseRawHeaders,
   parseHeaders,
   parseKeepAliveTimeout,
