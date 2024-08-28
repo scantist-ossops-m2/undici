@@ -1112,10 +1112,10 @@ function fetchFinale (fetchParams, response) {
 
     const byteStream = new ReadableStream({
       readableStream: transformStream.readable,
-      async pull (controller) {
+      async start (controller) {
         const reader = this.readableStream.getReader()
 
-        while (controller.desiredSize >= 0) {
+        while (true) {
           const { done, value } = await reader.read()
 
           if (done) {
@@ -1126,7 +1126,6 @@ function fetchFinale (fetchParams, response) {
           controller.enqueue(value)
         }
       },
-      queuingStrategy: new ByteLengthQueuingStrategy({ highWaterMark: 16384 }),
       type: 'bytes'
     })
 
@@ -1936,7 +1935,6 @@ async function httpNetworkFetch (
   //     cancelAlgorithm set to cancelAlgorithm.
   const stream = new ReadableStream(
     {
-      highWaterMark: 16384,
       async start (controller) {
         fetchParams.controller.controller = controller
       },
@@ -1946,8 +1944,7 @@ async function httpNetworkFetch (
       async cancel (reason) {
         await cancelAlgorithm(reason)
       },
-      type: 'bytes',
-      queuingStrategy: new ByteLengthQueuingStrategy({ highWaterMark: 16384 })
+      type: 'bytes'
     }
   )
 
